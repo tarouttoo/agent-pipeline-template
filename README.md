@@ -96,6 +96,7 @@ Verbatim is the goal; every deviation is listed here.
    show-me) instead of the canned stub; the stub remains only as fallback.
    The `implement-pr` feedback pass refreshes a stale body, and the review
    pass audits the body's claims against the diff but never edits it
-   (see `docs/adr/0001-agent-drafted-pr-bodies.md`).
+   (rationale: `docs/adr/0001-agent-drafted-pr-bodies.md`; how to read a
+   body when deciding to merge: [`docs/pr-body.md`](docs/pr-body.md)).
 
 Prompt and workflow code text is otherwise unchanged from upstream.

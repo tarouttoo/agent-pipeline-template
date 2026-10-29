@@ -66,9 +66,10 @@ Body drafted by the implement agent; audited by the review pass.
 
 ### Summary — against the diff
 
-The Summary is the scope claim, as pseudocode, a call tree, a file tree,
-or a diff. Open the `Files changed` tab and ask: does the diff do exactly
-what the Summary shows — no more, no less?
+The Summary is the scope claim, as pseudocode, a call or component tree,
+a file tree, a Mermaid diagram, or a diff — the smallest of the skill's
+views that makes the point. Open the `Files changed` tab and ask: does the
+diff do exactly what the Summary shows — no more, no less?
 
 ### Evidence — by re-running it
 
