@@ -57,7 +57,8 @@ label**.
 
 ## 3. Review the draft PR (your main job)
 
-The review loop is where the human judgement lives:
+The review loop is where the human judgement lives. How to read the PR
+body itself when deciding to merge: [docs/pr-body.md](pr-body.md).
 
 - **Give feedback** by leaving normal PR review comments — top-level and
   inline — then add `agent:implement` **to the PR**. The agent replies to
