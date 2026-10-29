@@ -41,6 +41,8 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
   (trigger and lifecycle) and the adopter setup command.
 - `docs/triage.md` — how a human feeds work into the pipeline: triageable
   issues, the draft-PR review loop, and acting on explore verdicts.
+- `docs/pr-body.md` — how to read an agent PR when deciding to merge: the
+  agent-drafted body, the review-pass audit, and the merge checklist.
 - `docs/adr/` — architecture decision records. Add one when making a
   non-obvious, hard-to-reverse choice; read the relevant ones before
   changing pipeline behaviour.
