@@ -37,6 +37,8 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
 
 - `docs/labels.md` — the reference for every label the pipeline uses
   (trigger and lifecycle) and the adopter setup command.
+- `docs/triage.md` — how a human feeds work into the pipeline: triageable
+  issues, the draft-PR review loop, and acting on explore verdicts.
 - `docs/adr/` — architecture decision records. Add one when making a
   non-obvious, hard-to-reverse choice; read the relevant ones before
   changing pipeline behaviour.
