@@ -40,8 +40,13 @@ trigger label named in that comment.
    - `agent:in-progress`
    - `agent:blocked`
 
+   Verdict labels (explore's apply job swaps these onto issues; each must
+   exist or the swap fails):
+   - `ready-for-human` — a `needs-a-human` verdict; the issue needs a human
+     decision before entering the pipeline
+
    ```sh
-   for label in "agent:implement" "agent:review" "agent:update-branch" "agent:explore" "agent:in-progress" "agent:blocked"; do
+   for label in "agent:implement" "agent:review" "agent:update-branch" "agent:explore" "agent:in-progress" "agent:blocked" "ready-for-human"; do
      gh label create "$label" --color d4c5f9 || true
    done
    ```
