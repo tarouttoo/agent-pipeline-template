@@ -164,16 +164,18 @@ jobs:
         id: open_pr
         env:
           BRANCH: ${{ steps.branch.outputs.name }}
+          PR_BODY_FILE: ${{ runner.temp }}/pr-body.md
         run: |
           title="Fix #${ISSUE_NUMBER}: ${ISSUE_TITLE}"
           title="${title:0:256}"
-          body_file="${RUNNER_TEMP}/pr-body.md"
-          {
-            echo "Closes #${ISSUE_NUMBER}"
-            echo
-            echo "Implemented by the Sandcastle agent workflow."
-          } > "$body_file"
-          pr_url=$(gh pr create --draft --base main --head "$BRANCH" --title "$title" --body-file "$body_file" | tail -n1)
+          if [ ! -s "$PR_BODY_FILE" ]; then
+            {
+              echo "Closes #${ISSUE_NUMBER}"
+              echo
+              echo "Implemented by the Sandcastle agent workflow."
+            } > "$PR_BODY_FILE"
+          fi
+          pr_url=$(gh pr create --draft --base main --head "$BRANCH" --title "$title" --body-file "$PR_BODY_FILE" | tail -n1)
           echo "pr_number=$(basename "$pr_url")" >> "$GITHUB_OUTPUT"
 
       - name: Request automated review

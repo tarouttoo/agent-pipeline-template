@@ -22,7 +22,9 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
 - **Subject** — the issue or PR a run is about. Concurrency groups are
   keyed per subject so parallel label events queue instead of racing.
 - **Draft PR** — the pull request the implement workflow opens against
-  `main`, body starting with `Closes #N` for the triggering issue.
+  `main`, body starting with `Closes #N` for the triggering issue, drafted
+  by the implement agent per the `pr` skill and audited (never edited) by
+  the review pass.
 - **Batch triage** — the explore workflow: one run collects every open
   `agent:explore` issue, the agent plans per-issue effects, and a separate
   apply job validates and applies the plan (issue bodies are untrusted

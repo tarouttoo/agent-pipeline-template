@@ -1,11 +1,12 @@
 import * as path from "node:path";
 import * as sandcastle from "@ai-hero/sandcastle";
 import { noSandbox } from "@ai-hero/sandcastle/sandboxes/no-sandbox";
-import { agentFromEnv, fail, required, safeSh, sh } from "../shared/common";
+import { agentFromEnv, fail, outputDir, required, safeSh, sh } from "../shared/common";
 
 const ISSUE_NUMBER = required("ISSUE_NUMBER");
 const ISSUE_TITLE = required("ISSUE_TITLE");
 const BRANCH = required("BRANCH");
+const PR_BODY_PATH = path.join(outputDir(), "pr-body.md");
 
 try {
   const issueContext =
@@ -23,6 +24,7 @@ try {
       ISSUE_TITLE,
       BRANCH,
       ISSUE_CONTEXT: issueContext,
+      PR_BODY_PATH,
     },
   });
 

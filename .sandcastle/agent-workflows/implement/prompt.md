@@ -40,4 +40,18 @@ Do not close the issue.
 Do not edit labels.
 Do not create or edit PRs.
 
+# PR BODY
+
+After the final commit, write the pull request body to `{{PR_BODY_PATH}}`:
+
+1. Read `.agents/skills/pr/SKILL.md` and follow it.
+2. Start the body with `Closes #{{ISSUE_NUMBER}}`, then the skill's
+   Summary, Evidence, and Merge Danger sections.
+3. End with exactly this line:
+
+   Body drafted by the implement agent; audited by the review pass.
+
+Evidence must come from commands you actually ran in this checkout. Do not
+commit the body file; the workflow opens the PR from it.
+
 When complete, output `<promise>COMPLETE</promise>`.

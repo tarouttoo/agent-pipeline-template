@@ -47,6 +47,11 @@ trigger label named in that comment.
 5. **First run**: label a standalone issue `agent:implement` and watch the
    Actions tab. A failure comments on the issue with the reason and labels
    it `agent:blocked`; re-add the trigger label to retry.
+6. **Record your one-way doors**: in your repo's agent docs (e.g.
+   `CONTEXT.md`), list the changes your project always treats as
+   irreversible — schema migrations, anything that ships outward or
+   deletes. The review pass reads them when auditing the Merge Danger
+   call in the PR body.
 
 Sanity checks after cloning:
 
@@ -85,5 +90,12 @@ Verbatim is the goal; every deviation is listed here.
    its `.sandcastle/` workflow starters; this template does, so it adds a
    `@standard-schema/spec` devDependency (a type-only import used by the
    ported code) and a `tsconfig.json` including `.sandcastle/**/*.ts`.
+4. **Agent-drafted PR bodies** — the implement agent drafts the draft-PR
+   body per the shipped `.agents/skills/pr/` skill (Summary / Evidence /
+   Merge Danger, from mattpocock/skills, itself adapted from Humanlayer's
+   show-me) instead of the canned stub; the stub remains only as fallback.
+   The `implement-pr` feedback pass refreshes a stale body, and the review
+   pass audits the body's claims against the diff but never edits it
+   (see `docs/adr/0001-agent-drafted-pr-bodies.md`).
 
 Prompt and workflow code text is otherwise unchanged from upstream.

@@ -160,6 +160,15 @@ jobs:
             gh pr comment "$PR_NUMBER" --body "$body"
           done
 
+      - name: Update PR body
+        if: github.event.pull_request.state == 'open' && success()
+        env:
+          PR_BODY_FILE: ${{ runner.temp }}/pr-body.md
+        run: |
+          if [ -s "$PR_BODY_FILE" ]; then
+            gh pr edit "$PR_NUMBER" --body-file "$PR_BODY_FILE"
+          fi
+
       - name: Mark blocked on failure
         if: github.event.pull_request.state == 'open' && failure()
         env:

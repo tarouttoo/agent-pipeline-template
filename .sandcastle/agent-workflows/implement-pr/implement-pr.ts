@@ -5,6 +5,7 @@ import { noSandbox } from "@ai-hero/sandcastle/sandboxes/no-sandbox";
 import {
   agentFromEnv,
   fail,
+  outputDir,
   required,
   writeJson,
   writeText,
@@ -19,6 +20,7 @@ import { runWithExtraction } from "../shared/run-with-extraction";
 
 const PR_NUMBER = required("PR_NUMBER");
 const BRANCH = required("BRANCH");
+const PR_BODY_PATH = path.join(outputDir(), "pr-body.md");
 
 try {
   const context = fetchPullRequestContext(PR_NUMBER);
@@ -38,6 +40,7 @@ try {
       LINKED_ISSUE: context.linkedIssue,
       DIFF_TO_MAIN: context.diff,
       PR_COMMENTS_JSON: context.prCommentsJson,
+      PR_BODY_PATH,
     },
     output: sandcastle.Output.object({
       tag: "output",
