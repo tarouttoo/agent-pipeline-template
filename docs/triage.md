@@ -40,8 +40,9 @@ handle. Before labelling, check the issue is:
 - **Not already covered** — an issue with an open collaborator PR is
   refused; close the existing PR first if you want a fresh run.
 
-A refusal comments on the issue explaining why and labels it
-`agent:blocked`; fix what the comment names and re-add `agent:implement`.
+A refusal comments on the issue explaining why and removes the trigger
+label; the sub-issue and PRD-shaped refusals also add `agent:blocked`. Fix
+what the comment names and re-add `agent:implement`.
 
 ## 2. Hand an issue to an agent
 
