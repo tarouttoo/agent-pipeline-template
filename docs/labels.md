@@ -26,8 +26,9 @@ naming the trigger label to re-add — **retrying means re-adding that label**.
 The exception is `agent:explore`: the label stays on the issue across runs
 (the apply job swaps it for a verdict label or removes it when closing a
 duplicate), and each run ignores the triggering event and explores every open
-`agent:explore` issue together. It also fires on `workflow_dispatch` as a
-dry-run.
+`agent:explore` issue together. It can also be run via `workflow_dispatch`,
+which is a dry-run by default — set the `dry_run` input to `false` to apply
+the plan for real.
 
 ## Lifecycle labels
 
