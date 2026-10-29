@@ -28,23 +28,9 @@ trigger label named in that comment.
 
 1. **Create your repo from this template** (or clone it). The pipeline
    files live in `.github/workflows/` and `.sandcastle/agent-workflows/`.
-2. **Create the labels** the workflows expect:
-
-   Trigger labels (you add these to drive the pipeline):
-   - `agent:implement` — issues and PRs
-   - `agent:review` — PRs
-   - `agent:update-branch` — PRs
-   - `agent:explore` — issues (batch triage)
-
-   Lifecycle labels (the workflows add/remove these themselves):
-   - `agent:in-progress`
-   - `agent:blocked`
-
-   ```sh
-   for label in "agent:implement" "agent:review" "agent:update-branch" "agent:explore" "agent:in-progress" "agent:blocked"; do
-     gh label create "$label" --color d4c5f9 || true
-   done
-   ```
+2. **Create the labels** the workflows expect — the full reference
+   (trigger vs lifecycle labels, what each one does, and the setup command)
+   lives in [`docs/labels.md`](docs/labels.md).
 
 3. **Set the secrets** (repo → Settings → Secrets and variables → Actions):
    - `ZAI_API_KEY` — API key for the pi provider (required by every agent run).

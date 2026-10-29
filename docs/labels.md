@@ -1,0 +1,53 @@
+# Labels
+
+The pipeline is driven entirely by labels. There are two kinds, matching the
+glossary in [CONTEXT.md](../CONTEXT.md):
+
+- **Trigger labels** — you add these to drive the pipeline. Adding one starts
+  the matching workflow; the workflow removes the label when the run begins.
+- **Lifecycle labels** — the workflows add and remove these themselves.
+
+What each triggered workflow does in detail: the
+[Workflows table in the README](../README.md#workflows).
+
+## Trigger labels
+
+| Label | Add it to | Starts | Notes |
+|---|---|---|---|
+| `agent:implement` | issues | `agent-implement.yml` | Refuses sub-issues / PRD-shaped issues / issues that already have an open collaborator PR; on success labels the new draft PR `agent:review`. |
+| `agent:implement` | PRs | `agent-implement-pr.yml` | Processes review feedback: replies to threads, addresses inline comments, pushes with a lease. |
+| `agent:review` | PRs | `agent-review.yml` | On success marks the PR ready. |
+| `agent:update-branch` | PRs | `agent-update-branch.yml` | Always resolves merge conflicts with `main`, never aborts. |
+| `agent:explore` | issues | `agent-explore.yml` | Batch triage. See the exception below. |
+
+A failed run labels the subject `agent:blocked` and posts a failure comment
+naming the trigger label to re-add — **retrying means re-adding that label**.
+
+The exception is `agent:explore`: the label stays on the issue across runs
+(the apply job swaps it for a verdict label or removes it when closing a
+duplicate), and each run ignores the triggering event and explores every open
+`agent:explore` issue together. It also fires on `workflow_dispatch` as a
+dry-run.
+
+## Lifecycle labels
+
+| Label | Meaning |
+|---|---|
+| `agent:in-progress` | Added when a run begins (alongside removing the trigger label and any `agent:blocked`); removed when the run ends, success or failure. |
+| `agent:blocked` | Added when a run fails, together with the failure comment naming the trigger label to re-add; removed by the next run's start. The explore batch does not use it — a failed batch leaves every `agent:explore` label in place for the next run. |
+| `ready-for-human` | The explore `needs-a-human` verdict, applied to a surviving issue that needs a human decision. Must exist or the apply job's label swap fails. |
+
+The other two explore verdicts reuse labels above: an `easy-call` survivor is
+handed `agent:implement` (added with `AGENT_PAT` so the label event actually
+starts the implement workflow), and a `blocked` survivor gets
+`agent:blocked`.
+
+## Setup
+
+Create the labels the workflows expect:
+
+```sh
+for label in "agent:implement" "agent:review" "agent:update-branch" "agent:explore" "agent:in-progress" "agent:blocked" "ready-for-human"; do
+  gh label create "$label" --color d4c5f9 || true
+done
+```

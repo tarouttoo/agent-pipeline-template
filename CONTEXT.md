@@ -35,6 +35,8 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
 
 ## Where things live
 
+- `docs/labels.md` — the reference for every label the pipeline uses
+  (trigger and lifecycle) and the adopter setup command.
 - `docs/adr/` — architecture decision records. Add one when making a
   non-obvious, hard-to-reverse choice; read the relevant ones before
   changing pipeline behaviour.
