@@ -101,17 +101,3 @@ Verbatim is the goal; every deviation is listed here.
    ported code) and a `tsconfig.json` including `.sandcastle/**/*.ts`.
 
 Prompt and workflow code text is otherwise unchanged from upstream.
-
-## Planned patches
-
-Layered hardening work on top of the verbatim port, in priority order
-(not yet applied):
-
-1. **Lease-guarded push in implement** — upstream pushes with `--force`;
-   guard against clobbering commits pushed by a concurrent run.
-2. **Triage bridge** — a `ready-for-agent` → `agent:implement` reverification
-   step connecting human triage to the pipeline.
-3. **Agent-drafted PR body** — let the implement agent draft the PR body
-   from a PR template instead of the canned stub.
-4. **Guarded label transitions** — centralize lifecycle label mutations so
-   they can only run as the workflow's own token.
