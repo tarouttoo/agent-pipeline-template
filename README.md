@@ -29,8 +29,8 @@ trigger label named in that comment.
 1. **Create your repo from this template** (or clone it). The pipeline
    files live in `.github/workflows/` and `.sandcastle/agent-workflows/`.
 2. **Create the labels** the workflows expect — the full reference
-   (trigger vs lifecycle labels, what each one does, and the setup command)
-   lives in [`docs/labels.md`](docs/labels.md).
+   (trigger, lifecycle, and verdict labels, what each one does, and the
+   setup command) lives in [`docs/labels.md`](docs/labels.md).
 
 3. **Set the secrets** (repo → Settings → Secrets and variables → Actions):
    - `ZAI_API_KEY` — API key for the pi provider (required by every agent run).
