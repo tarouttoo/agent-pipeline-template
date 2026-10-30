@@ -166,6 +166,7 @@ jobs:
           BRANCH: ${{ steps.branch.outputs.name }}
           PR_BODY_FILE: ${{ runner.temp }}/pr-body.md
         run: |
+          set -euo pipefail
           title="Fix #${ISSUE_NUMBER}: ${ISSUE_TITLE}"
           title="${title:0:256}"
           if [ ! -s "$PR_BODY_FILE" ]; then

@@ -98,5 +98,12 @@ Verbatim is the goal; every deviation is listed here.
    pass audits the body's claims against the diff but never edits it
    (rationale: `docs/adr/0001-agent-drafted-pr-bodies.md`; how to read a
    body when deciding to merge: [`docs/pr-body.md`](docs/pr-body.md)).
+5. **`Open draft PR` fails hard when `gh pr create` fails** — the step sets
+   `set -euo pipefail` so the `gh pr create | tail -n1` pipe cannot swallow
+   the exit code (upstream: the failure surfaces as an empty `pr_number` and
+   the run instead fails later in `Request automated review`, masking the
+   real cause). Regression-tested in
+   `.sandcastle/agent-workflows/shared/open-draft-pr.test.ts`, which runs
+   the step script with a stubbed `gh`.
 
 Prompt and workflow code text is otherwise unchanged from upstream.
