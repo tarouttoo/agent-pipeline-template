@@ -140,5 +140,12 @@ Verbatim is the goal; every deviation is listed here.
    package (`src/`, `sandcastle init`, Docker sandbox); this template
    consumes the pipeline as an npm dependency, so those references point at
    upstream, not at files in this repo.
+7. **`Open draft PR` fails hard when `gh pr create` fails** — the step sets
+   `set -euo pipefail` so the `gh pr create | tail -n1` pipe cannot swallow
+   the exit code (upstream: the failure surfaces as an empty `pr_number` and
+   the run instead fails later in `Request automated review`, masking the
+   real cause). Regression-tested in
+   `.sandcastle/agent-workflows/shared/open-draft-pr.test.ts`, which runs
+   the step script with a stubbed `gh`.
 
 Prompt and workflow code text is otherwise unchanged from upstream.
