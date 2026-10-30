@@ -25,6 +25,13 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
   `main`, body starting with `Closes #N` for the triggering issue, drafted
   by the implement agent per the `pr` skill and audited (never edited) by
   the review pass.
+- **Spec** — a parent issue whose sub-issues are the Tickets that implement
+  it (upstream calls this shape a PRD). The implement preflight refuses a
+  Spec labelled directly; when one of its Tickets runs, the Spec is pulled
+  in as the `PARENT_CONTEXT` prompt arg.
+- **Ticket** — an issue the implement workflow can act on: no sub-issues of
+  its own (one change per issue). May be standalone or a child of a Spec; a
+  child-of-spec Ticket's run receives its parent Spec as context.
 - **Batch triage** — the explore workflow: one run collects every open
   `agent:explore` issue, the agent plans per-issue effects, and a separate
   apply job validates and applies the plan (issue bodies are untrusted

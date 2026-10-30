@@ -14,7 +14,7 @@ not Claude Code**. See [Deviations from upstream](#deviations-from-upstream).
 
 | Label | Workflow | What happens |
 |---|---|---|
-| `agent:implement` (issue) | `agent-implement.yml` | Preflight gates (refuses sub-issues / PRD-shaped issues / issues with an open collaborator PR), then an agent implements on an isolated branch and opens a draft PR that closes the issue, then labels the PR `agent:review`. |
+| `agent:implement` (issue) | `agent-implement.yml` | Preflight gates (refuses PRD-shaped issues / issues with an open collaborator PR; a child-of-spec Ticket passes and its parent Spec is pulled in as context), then an agent implements on an isolated branch and opens a draft PR that closes the issue, then labels the PR `agent:review`. |
 | `agent:implement` (PR) | `agent-implement-pr.yml` | Processes review feedback on an existing PR: replies to threads, addresses inline comments, pushes with a lease. |
 | `agent:review` | `agent-review.yml` | Reviews the PR, self-fixes findings on the branch, posts a PR review, replies to threads, marks the PR ready. |
 | `agent:update-branch` | `agent-update-branch.yml` | Resolves merge conflicts with `main` (always resolve, never abort) and pushes. |
@@ -98,5 +98,13 @@ Verbatim is the goal; every deviation is listed here.
    pass audits the body's claims against the diff but never edits it
    (rationale: `docs/adr/0001-agent-drafted-pr-bodies.md`; how to read a
    body when deciding to merge: [`docs/pr-body.md`](docs/pr-body.md)).
+5. **Child-of-spec Tickets are implementable** — the implement preflight
+   admits a Ticket whose parent is another issue (upstream refuses any
+   sub-issue) and the implement pass pulls the parent Spec in as a
+   `PARENT_CONTEXT` prompt arg: upstream's own local parallel-planner
+   prompt ("If it has a parent PRD, pull that in too", pinned `a53e227`),
+   which its CI workflow never reached because of that refusal. The
+   PRD-shaped refusal and every other guardrail are unchanged
+   (rationale: `docs/adr/0002-child-of-spec-tickets-implementable.md`).
 
 Prompt and workflow code text is otherwise unchanged from upstream.
