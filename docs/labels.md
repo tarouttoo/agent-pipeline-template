@@ -6,6 +6,8 @@ glossary in [CONTEXT.md](../CONTEXT.md):
 - **Trigger labels** — you add these to drive the pipeline. Adding one starts
   the matching workflow; the workflow removes the label when the run begins.
 - **Lifecycle labels** — the workflows add and remove these themselves.
+- **Triage label** — `ready-for-agent`: the approval the converter consumes
+  (see below).
 
 What each triggered workflow does in detail: the
 [Workflows table in the README](../README.md#workflows). How a human drives
@@ -48,12 +50,25 @@ handed `agent:implement` (added with `AGENT_PAT` so the label event actually
 starts the implement workflow), and a `blocked` survivor gets
 `agent:blocked`.
 
+## Triage label
+
+| Label | Put it on | What happens |
+|---|---|---|
+| `ready-for-agent` | Ticket issues | The converter's approval (`agent-convert.yml`, no upstream counterpart). The Ticket is evaluated when it is labelled and re-scanned whenever another issue closes. All blockers closed → the label is swapped for `agent:implement` (added with `AGENT_PAT` so the label event actually starts the implement workflow). Open blockers → a comment names them; the label is kept and the swap fires when the last blocker closes. |
+
+Blocking edges are read from the tracker's native blocked-by relationships
+where available, falling back to the issue body's `## Blocked by` section —
+parsed in TypeScript, never the shell. This is the label the triage skills
+speak in: `docs/agents/triage.md` maps the canonical `ready-for-agent` role
+onto it, and the converter is what makes the pipeline honor that vocabulary
+(`docs/adr/0003-ready-for-agent-converter.md`).
+
 ## Setup
 
 Create the labels the workflows expect:
 
 ```sh
-for label in "agent:implement" "agent:review" "agent:update-branch" "agent:explore" "agent:in-progress" "agent:blocked" "ready-for-human"; do
+for label in "agent:implement" "agent:review" "agent:update-branch" "agent:explore" "agent:in-progress" "agent:blocked" "ready-for-human" "ready-for-agent"; do
   gh label create "$label" --color d4c5f9 || true
 done
 ```

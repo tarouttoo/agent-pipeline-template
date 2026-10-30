@@ -6,7 +6,7 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 | -------------------------- | --------------------------- | ---------------------------------------- |
 | `needs-triage`             | `agent:explore`             | Maintainer needs to evaluate this issue  |
 | `needs-info`               | `agent:blocked`             | Waiting on reporter for more information |
-| `ready-for-agent`          | `agent:implement`           | Fully specified, ready for an AFK agent  |
+| `ready-for-agent`          | `ready-for-agent`           | Fully specified, ready for an AFK agent — the converter swaps it for `agent:implement` once its blockers close |
 | `ready-for-human`          | `ready-for-human`           | Requires human implementation            |
 | `wontfix`                  | — (close the issue instead) | Will not be actioned                     |
 

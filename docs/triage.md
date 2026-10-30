@@ -59,6 +59,19 @@ If the run fails, the issue gets `agent:blocked` and a failure comment
 naming the trigger label to re-add — **retrying means re-adding that
 label**.
 
+### The automated alternative: `ready-for-agent`
+
+If the Ticket is fully specified but waiting on other issues — or it was
+published by the triage skills' `to-spec`/`to-tickets` flow, which label
+child Tickets `ready-for-agent` by construction — you can label it
+`ready-for-agent` instead of `agent:implement`. The converter
+(`agent-convert.yml`) swaps it for `agent:implement` automatically once
+every blocker is closed; until then it comments naming the open blockers.
+Blockers are read from native blocked-by relationships where available,
+falling back to the issue body's `## Blocked by` section
+([docs/labels.md](labels.md),
+[ADR 0003](adr/0003-ready-for-agent-converter.md)).
+
 ## 3. Review the draft PR (your main job)
 
 The review loop is where the human judgement lives. How to read the PR
