@@ -2,16 +2,24 @@ import * as path from "node:path";
 import * as sandcastle from "@ai-hero/sandcastle";
 import { noSandbox } from "@ai-hero/sandcastle/sandboxes/no-sandbox";
 import { agentFromEnv, fail, outputDir, required, safeSh, sh } from "../shared/common";
+import { parseParentNumber, renderParentContext } from "./parent-context";
 
 const ISSUE_NUMBER = required("ISSUE_NUMBER");
 const ISSUE_TITLE = required("ISSUE_TITLE");
 const BRANCH = required("BRANCH");
+// Empty unless the shape step exported a parent issue (child-of-spec Ticket).
+const PARENT_NUMBER = process.env.PARENT_NUMBER;
 const PR_BODY_PATH = path.join(outputDir(), "pr-body.md");
 
 try {
   const issueContext =
     safeSh(`gh issue view ${ISSUE_NUMBER} --comments`) ||
     `Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}`;
+
+  const parentContext = renderParentContext(
+    parseParentNumber(PARENT_NUMBER),
+    (number) => safeSh(`gh issue view ${number} --comments`),
+  );
 
   const result = await sandcastle.run({
     name: `implement-#${ISSUE_NUMBER}`,
@@ -24,6 +32,7 @@ try {
       ISSUE_TITLE,
       BRANCH,
       ISSUE_CONTEXT: issueContext,
+      PARENT_CONTEXT: parentContext,
       PR_BODY_PATH,
     },
   });

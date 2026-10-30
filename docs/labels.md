@@ -19,7 +19,7 @@ mattpocock/skills speaks in (`needs-triage`, `needs-info`, `ready-for-agent`,
 
 | Label | Add it to | Starts | Notes |
 |---|---|---|---|
-| `agent:implement` | issues | `agent-implement.yml` | Refuses sub-issues / PRD-shaped issues / issues that already have an open collaborator PR; on success labels the new draft PR `agent:review`. |
+| `agent:implement` | issues | `agent-implement.yml` | Refuses PRD-shaped issues (sub-issues of their own) / issues that already have an open collaborator PR; a child-of-spec Ticket passes and its parent Spec is pulled in as context. On success labels the new draft PR `agent:review`. |
 | `agent:implement` | PRs | `agent-implement-pr.yml` | Processes review feedback: replies to threads, addresses inline comments, pushes with a lease. |
 | `agent:review` | PRs | `agent-review.yml` | On success marks the PR ready. |
 | `agent:update-branch` | PRs | `agent-update-branch.yml` | Always resolves merge conflicts with `main`, never aborts. |
