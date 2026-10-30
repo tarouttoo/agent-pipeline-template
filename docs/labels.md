@@ -10,7 +10,10 @@ glossary in [CONTEXT.md](../CONTEXT.md):
 What each triggered workflow does in detail: the
 [Workflows table in the README](../README.md#workflows). How a human drives
 the loop day to day — writing triageable issues, reviewing draft PRs,
-acting on verdicts: [docs/triage.md](triage.md).
+acting on verdicts: [docs/triage.md](triage.md). The canonical triage roles
+mattpocock/skills speaks in (`needs-triage`, `needs-info`, `ready-for-agent`,
+`ready-for-human`, `wontfix`) map onto the labels below in
+[docs/agents/triage.md](agents/triage.md).
 
 ## Trigger labels
 

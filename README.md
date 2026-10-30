@@ -128,5 +128,17 @@ Verbatim is the goal; every deviation is listed here.
    which its CI workflow never reached because of that refusal. The
    PRD-shaped refusal and every other guardrail are unchanged
    (rationale: `docs/adr/0002-child-of-spec-tickets-implementable.md`).
+6. **`docs/agents/` and the `triage-repro` skill restored** — the port
+   initially dropped upstream's agent-facing docs; they are carried back
+   verbatim, except the right-hand column of the label table in
+   [`docs/agents/triage.md`](docs/agents/triage.md), which that file tells
+   adopters to fill in: mapped to this template's labels (`agent:explore`,
+   `agent:blocked`, `agent:implement`, `ready-for-human`; `wontfix` closes
+   the issue — no label). Note that `docs/agents/adding-an-agent-provider.md`,
+   `docs/agents/adding-an-issue-tracker.md` and the reproduction steps in
+   `.agents/skills/triage-repro/SKILL.md` describe the upstream sandcastle
+   package (`src/`, `sandcastle init`, Docker sandbox); this template
+   consumes the pipeline as an npm dependency, so those references point at
+   upstream, not at files in this repo.
 
 Prompt and workflow code text is otherwise unchanged from upstream.
