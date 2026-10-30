@@ -32,6 +32,18 @@ describe("implement preflight (Detect issue shape)", () => {
     );
   });
 
+  it("emits the parent_number output the implement step consumes", () => {
+    // Without this line PARENT_NUMBER is always empty and every
+    // child-of-spec Ticket silently runs without its parent spec.
+    const shapeStep = workflow.slice(
+      workflow.indexOf("Detect issue shape"),
+      workflow.indexOf("- name: Refuse PRD-shaped issue"),
+    );
+    expect(shapeStep).toContain(
+      'echo "parent_number=$parent_number" >> "$GITHUB_OUTPUT"',
+    );
+  });
+
   it("exports the parent pointer to the implement script", () => {
     const runStep = workflow.slice(workflow.indexOf("Run implementation agent"));
     const stepBody = runStep.slice(0, runStep.indexOf("- name:", 1));
