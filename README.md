@@ -19,6 +19,7 @@ not Claude Code**. See [Deviations from upstream](#deviations-from-upstream).
 | `agent:review` | `agent-review.yml` | Reviews the PR, self-fixes findings on the branch, posts a PR review, replies to threads, marks the PR ready. |
 | `agent:update-branch` | `agent-update-branch.yml` | Resolves merge conflicts with `main` (always resolve, never abort) and pushes. |
 | `agent:explore` | `agent-explore.yml` | Batch triage: one agent run plans effects for every open `agent:explore` issue; a separate apply job validates the plan and applies it. Supports `workflow_dispatch` dry-run. |
+| `ready-for-agent` (issue) | `agent-convert.yml` | Converter (no upstream counterpart): re-evaluates the Ticket when labelled and whenever another issue closes. All blockers closed → swaps the label for `agent:implement` (added with `AGENT_PAT` so the implement workflow actually starts); open blockers → comments naming them and keeps waiting. Blocking edges come from the tracker's native blocked-by relationships, falling back to the body's `## Blocked by` section. |
 
 Every run posts a failure comment with a reason and the workflow-run link,
 and relabels the subject `agent:blocked`. Retrying means re-adding the
@@ -147,5 +148,18 @@ Verbatim is the goal; every deviation is listed here.
    real cause). Regression-tested in
    `.sandcastle/agent-workflows/shared/open-draft-pr.test.ts`, which runs
    the step script with a stubbed `gh`.
+8. **The `ready-for-agent` converter** — a sixth workflow,
+   `agent-convert.yml`, with no upstream counterpart: Tickets labelled
+   `ready-for-agent` (the triage skills' vocabulary, published by
+   construction by its `to-spec`/`to-tickets` flow) are handed to the
+   implement workflow once their blocking edges are all closed, re-firing on
+   `issues: closed` — no schedule. Edges come from the tracker's native
+   blocked-by relationships where available, falling back to parsing the
+   body's `## Blocked by` section in TypeScript (bodies stay untrusted
+   input, never in the shell); the hand-off label is added with `AGENT_PAT`,
+   degrading with the same warning explore's apply job emits when only
+   `GITHUB_TOKEN` is available (rationale:
+   [`docs/adr/0003-ready-for-agent-converter.md`](docs/adr/0003-ready-for-agent-converter.md);
+   day-to-day usage: [`docs/triage.md`](docs/triage.md)).
 
 Prompt and workflow code text is otherwise unchanged from upstream.

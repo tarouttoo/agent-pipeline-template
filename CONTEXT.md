@@ -36,6 +36,13 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
   `agent:explore` issue, the agent plans per-issue effects, and a separate
   apply job validates and applies the plan (issue bodies are untrusted
   input and never enter the shell).
+- **Converter** — the ready-for-agent converter (`agent-convert.yml`, no
+  upstream counterpart, ADR 0003): a Ticket labelled `ready-for-agent` (the
+  skills' "AFK-ready" role) is swapped to `agent:implement` once every
+  blocking edge is closed; edges come from native blocked-by relationships
+  with the body's `## Blocked by` section as fallback, and a blocker closing
+  re-scans its dependents. The label is the approval; the decision is a
+  deterministic script, not an agent.
 - **Canonical triage roles** — the five roles the skills speak in
   (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`,
   `wontfix`), mapped to this repo's label strings in
