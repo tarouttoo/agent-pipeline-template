@@ -56,5 +56,5 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
 - `.sandcastle/CODING_STANDARDS.md` — coding standards the workflow agents
   apply to the host repo; they describe how code in an adopting repo
   should look.
-- `README.md` — adopter setup (secrets, labels) and deviations from the
-  upstream pipeline this was ported from.
+- `README.md` — adopter setup (repo settings, secrets, labels) and
+  deviations from the upstream pipeline this was ported from.
