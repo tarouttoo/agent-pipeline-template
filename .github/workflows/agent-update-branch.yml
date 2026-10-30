@@ -55,6 +55,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+          # Checkout credentials persist into git push. Merging main can
+          # bring .github/workflows/* files onto the branch, and a plain
+          # GITHUB_TOKEN is refused for pushing those (README, deviations
+          # entry 8).
+          token: ${{ secrets.AGENT_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Prepare branch
         run: |

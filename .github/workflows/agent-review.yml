@@ -45,6 +45,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+          # Checkout credentials persist into git push. The push must be
+          # able to carry .github/workflows/* changes, which a plain
+          # GITHUB_TOKEN is refused for (README, deviations entry 8); the
+          # gh API calls keep using GITHUB_TOKEN via GH_TOKEN above.
+          token: ${{ secrets.AGENT_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Prepare branch
         run: |
