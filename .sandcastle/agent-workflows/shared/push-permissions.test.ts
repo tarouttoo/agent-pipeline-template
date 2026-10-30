@@ -7,18 +7,22 @@ import { parse } from "yaml";
  * Contract tests over every workflow that pushes a branch: pushing commits
  * that create or update files under `.github/workflows/` is refused with a
  * plain GITHUB_TOKEN ("refusing to allow a GitHub App to create or update
- * workflow … without `workflows` permission") unless the job also grants
- * `workflows: write`. Upstream never pushes workflow-file changes — this
+ * workflow … without `workflows` permission"), and `workflows` is not a
+ * grantable scope in the Actions `permissions` block — the checkout token
+ * is the only lever. Upstream never pushes workflow-file changes; this
  * repo's agents build the pipeline itself, so every branch-pushing job
- * must carry the grant (README, "Deviations from upstream" 8). Without it
- * the run fails at its final "Push branch" step after the agent did all
- * the work, and the PR lands `agent:blocked`.
+ * must check out with `AGENT_PAT || GITHUB_TOKEN` (README, "Deviations
+ * from upstream" 8). Without it the run fails at its final "Push branch"
+ * step after the agent did all the work, and the PR lands `agent:blocked`.
  */
 
-type Job = {
-  permissions?: Record<string, string>;
-  steps?: Array<{ run?: string }>;
+type Step = {
+  uses?: string;
+  with?: { token?: string };
+  run?: string;
 };
+
+type Job = { steps?: Step[] };
 
 const workflowsDir = path.join(import.meta.dirname, "../../../.github/workflows");
 
@@ -37,7 +41,7 @@ function branchPushingJobs(): Map<string, Job> {
   return found;
 }
 
-describe("branch-pushing jobs may push workflow files", () => {
+describe("branch-pushing jobs can push workflow files", () => {
   const jobs = branchPushingJobs();
 
   it("covers exactly the workflows that push a branch", () => {
@@ -51,7 +55,18 @@ describe("branch-pushing jobs may push workflow files", () => {
     ]);
   });
 
-  it.each([...jobs.entries()])("%s grants workflows: write", (_, job) => {
-    expect(job.permissions?.workflows).toBe("write");
-  });
+  it.each([...jobs.entries()])(
+    "%s checks out with AGENT_PAT || GITHUB_TOKEN",
+    (_, job) => {
+      const checkouts = (job.steps ?? []).filter((step) =>
+        step.uses?.startsWith("actions/checkout"),
+      );
+      expect(checkouts.length).toBeGreaterThan(0);
+      for (const checkout of checkouts) {
+        expect(checkout.with?.token).toBe(
+          "${{ secrets.AGENT_PAT || secrets.GITHUB_TOKEN }}",
+        );
+      }
+    },
+  );
 });
