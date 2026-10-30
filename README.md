@@ -32,7 +32,15 @@ trigger label named in that comment.
    (trigger, lifecycle, and verdict labels, what each one does, and the
    setup command) lives in [`docs/labels.md`](docs/labels.md).
 
-3. **Set the secrets** (repo → Settings → Secrets and variables → Actions):
+3. **Allow GitHub Actions to create and approve pull requests** (repo →
+   Settings → Actions → General → Workflow permissions): the implement
+   workflow (`agent-implement.yml`) opens its draft PR with `GITHUB_TOKEN`,
+   and with this setting off — the default for new repositories and
+   organizations — that run fails at the "Open draft PR" step because
+   `GITHUB_TOKEN` is not permitted to create pull requests. Setting
+   `AGENT_PAT` does not bypass this: the step always uses `GITHUB_TOKEN`.
+
+4. **Set the secrets** (repo → Settings → Secrets and variables → Actions):
    - `ZAI_API_KEY` — API key for the pi provider (required by every agent run).
    - `AGENT_PAT` — a personal access token with `contents`, `issues` and
      `pull-requests` write (classic: `repo` scope; workflow-touching changes
@@ -41,13 +49,13 @@ trigger label named in that comment.
      `AGENT_PAT` the automatic `implement → review` cascade silently degrades
      (the review label is added but never fires). The implement checkout also
      prefers `AGENT_PAT` for pushing.
-4. **Tune the provider/model** if needed: each workflow sets
+5. **Tune the provider/model** if needed: each workflow sets
    `AGENT_PROVIDER: zai` and `AGENT_MODEL: glm-5.3-flash` in its env. Edit
    the env vars; nothing in code needs to change.
-5. **First run**: label a standalone issue `agent:implement` and watch the
+6. **First run**: label a standalone issue `agent:implement` and watch the
    Actions tab. A failure comments on the issue with the reason and labels
    it `agent:blocked`; re-add the trigger label to retry.
-6. **Record your one-way doors**: in your repo's agent docs (e.g.
+7. **Record your one-way doors**: in your repo's agent docs (e.g.
    `CONTEXT.md`), list the changes your project always treats as
    irreversible — schema migrations, anything that ships outward or
    deletes. The review pass reads them when auditing the Merge Danger
