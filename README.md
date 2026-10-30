@@ -21,9 +21,12 @@ not Claude Code**. See [Deviations from upstream](#deviations-from-upstream).
 | `agent:explore` | `agent-explore.yml` | Batch triage: one agent run plans effects for every open `agent:explore` issue; a separate apply job validates the plan and applies it. Supports `workflow_dispatch` dry-run. |
 | `ready-for-agent` (issue) | `agent-convert.yml` | Converter (no upstream counterpart): re-evaluates the Ticket when labelled and whenever another issue closes. All blockers closed → swaps the label for `agent:implement` (added with `AGENT_PAT` so the implement workflow actually starts); open blockers → comments naming them and keeps waiting. Blocking edges come from the tracker's native blocked-by relationships, falling back to the body's `## Blocked by` section. |
 
-Every run posts a failure comment with a reason and the workflow-run link,
-and relabels the subject `agent:blocked`. Retrying means re-adding the
-trigger label named in that comment.
+Every agent run posts a failure comment with a reason and the workflow-run
+link, and relabels the subject `agent:blocked`. Retrying means re-adding the
+trigger label named in that comment. The `ready-for-agent` converter is the
+exception: it runs no agent, so a failed converter run is a plain workflow
+failure with no failure comment — retry it by removing and re-adding
+`ready-for-agent` on the affected Ticket.
 
 ## Adopting this template
 

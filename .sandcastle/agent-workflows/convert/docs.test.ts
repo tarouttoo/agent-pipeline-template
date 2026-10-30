@@ -41,6 +41,13 @@ describe("ready-for-agent converter docs", () => {
     expect(readme).toMatch(/ready-for-agent.*agent-convert\.yml/s);
   });
 
+  it("documents the converter's failure and retry story in the README", () => {
+    expect(readme).toMatch(/Every agent run posts a failure comment/);
+    expect(readme).toMatch(
+      /retry it by removing and re-adding\s+`ready-for-agent`/s,
+    );
+  });
+
   it("is recorded as a documented deviation with an ADR", () => {
     expect(readme).toMatch(/Deviations[\s\S]*ready-for-agent`? converter/i);
     expect(

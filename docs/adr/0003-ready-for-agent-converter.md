@@ -48,8 +48,10 @@ to port, so this lands as a documented deviation instead of a verbatim port.
   rejected: the motivating cases (skills-published Tickets) carry blockers
   only in the body while the native endpoint answers `[]` successfully.
 - **Schedule/polling for waiting Tickets** — rejected: noisy and slow; the
-  `closed` event is exactly the state change that can unblock a dependent,
-  and `workflow_dispatch` remains for manual nudges.
+  `closed` event is exactly the state change that can unblock a dependent.
+  The manual nudge is a label cycle — removing and re-adding
+  `ready-for-agent` re-fires the `labeled` evaluation — which is also how a
+  failed converter run is retried.
 - **Letting the explore agent decide convert-or-wait** — rejected: the
   decision is a pure predicate over issue states; an agent adds cost and
   nondeterminism to a gate, which the pipeline keeps deterministic

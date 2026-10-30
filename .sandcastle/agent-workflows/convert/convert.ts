@@ -84,7 +84,11 @@ const fetchIssue = (number: number): LiveIssue | null => {
   }
 };
 
-/** Native blockers of an issue; null when the dependencies API is unavailable. */
+/**
+ * Native blockers of an issue, all pages (the endpoint caps at 30 per page
+ * and a truncated list would silently drop an open blocker); null when the
+ * dependencies API is unavailable.
+ */
 const nativeBlockers = (
   number: number,
 ): { number: number; state: BlockerState }[] | null => {
@@ -92,6 +96,7 @@ const nativeBlockers = (
     return parseNativeIssues(
       ghJson([
         "api",
+        "--paginate",
         `repos/${GH_REPO}/issues/${String(number)}/dependencies/blocked_by`,
       ]),
     );
@@ -100,12 +105,13 @@ const nativeBlockers = (
   }
 };
 
-/** Native dependents (issues the closed issue blocks); null on failure. */
+/** Native dependents (issues the closed issue blocks, all pages); null on failure. */
 const nativeDependents = (number: number): number[] | null => {
   try {
     return parseNativeIssues(
       ghJson([
         "api",
+        "--paginate",
         `repos/${GH_REPO}/issues/${String(number)}/dependencies/blocking`,
       ]),
     ).map((issue) => issue.number);
@@ -194,11 +200,21 @@ const main = (): void => {
   const rows: string[] = [];
   for (const number of numbers) {
     const issue = fetchIssue(number);
-    if (
-      issue === null ||
-      issue.state !== "open" ||
-      !issue.labels.includes(CONVERT_LABEL)
-    ) {
+    if (issue === null) {
+      // On a `labeled` event this is the only candidate and there may be no
+      // future `closed` pulse for it, so a read failure must not pass as a
+      // skip — that would silently stall the Ticket. Fail instead; the
+      // retry is a label cycle (remove and re-add `ready-for-agent`).
+      if (EVENT_ACTION === "labeled") {
+        fail(
+          `Could not read #${number}; cannot evaluate the ${CONVERT_LABEL} conversion. Remove and re-add the label to retry.`,
+        );
+      }
+      rows.push(`| #${number} | — | skipped: could not be read |`);
+      console.log(`Skipped #${number}: could not be read.`);
+      continue;
+    }
+    if (issue.state !== "open" || !issue.labels.includes(CONVERT_LABEL)) {
       rows.push(
         `| #${number} | — | skipped: no longer open with \`${CONVERT_LABEL}\` |`,
       );
@@ -221,18 +237,35 @@ const main = (): void => {
       }
       // A label added with GITHUB_TOKEN does not trigger other workflows, so
       // the hand-off must go through AGENT_PAT (the PAT cascade).
-      ghWith(
-        [
-          "issue",
-          "edit",
-          String(number),
-          "--remove-label",
-          CONVERT_LABEL,
-          "--add-label",
-          HANDOFF_LABEL,
-        ],
-        { token: AGENT_PAT },
-      );
+      try {
+        ghWith(
+          [
+            "issue",
+            "edit",
+            String(number),
+            "--remove-label",
+            CONVERT_LABEL,
+            "--add-label",
+            HANDOFF_LABEL,
+          ],
+          { token: AGENT_PAT },
+        );
+      } catch (error) {
+        // One push closing several blockers of the same Ticket fires parallel
+        // `closed` runs with different concurrency groups, and both can reach
+        // this swap. The loser's --remove-label 404s on a label the winner
+        // already removed — tolerate exactly that race by verifying the
+        // outcome, and fail loudly on anything else.
+        const fresh = fetchIssue(number);
+        const alreadyConverted =
+          fresh !== null &&
+          fresh.labels.includes(HANDOFF_LABEL) &&
+          !fresh.labels.includes(CONVERT_LABEL);
+        if (!alreadyConverted) throw error;
+        console.log(
+          `#${number} was already converted by a concurrent run; duplicate swap skipped.`,
+        );
+      }
       rows.push(
         `| #${number} | — | \`${CONVERT_LABEL}\` → \`${HANDOFF_LABEL}\` |`,
       );
