@@ -8,6 +8,14 @@ You are on branch `{{BRANCH}}`, already created from `main`.
 
 {{ISSUE_CONTEXT}}
 
+# PARENT SPEC
+
+{{PARENT_CONTEXT}}
+
+If a parent spec is shown above, it is background: it explains why this
+Ticket exists and what it is part of. Implement only issue #{{ISSUE_NUMBER}}
+— never the spec itself or its other Tickets.
+
 # CONTEXT
 
 Read the project's domain and architecture docs before changing code:

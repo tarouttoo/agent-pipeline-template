@@ -25,10 +25,21 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
   `main`, body starting with `Closes #N` for the triggering issue, drafted
   by the implement agent per the `pr` skill and audited (never edited) by
   the review pass.
+- **Spec** — a parent issue whose sub-issues are the Tickets that implement
+  it (upstream calls this shape a PRD). The implement preflight refuses a
+  Spec labelled directly; when one of its Tickets runs, the Spec is pulled
+  in as the `PARENT_CONTEXT` prompt arg.
+- **Ticket** — an issue the implement workflow can act on: no sub-issues of
+  its own (one change per issue). May be standalone or a child of a Spec; a
+  child-of-spec Ticket's run receives its parent Spec as context.
 - **Batch triage** — the explore workflow: one run collects every open
   `agent:explore` issue, the agent plans per-issue effects, and a separate
   apply job validates and applies the plan (issue bodies are untrusted
   input and never enter the shell).
+- **Canonical triage roles** — the five roles the skills speak in
+  (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`,
+  `wontfix`), mapped to this repo's label strings in
+  `docs/agents/triage.md`.
 - **Extraction** — the second, structured-output pass a run may take
   (`extraction.md`) to turn free-form agent output into typed JSON.
 - **PAT cascade** — label events fired by `GITHUB_TOKEN` never start other
@@ -46,8 +57,17 @@ labels (`agent:implement`, `agent:review`, `agent:update-branch`,
 - `docs/adr/` — architecture decision records. Add one when making a
   non-obvious, hard-to-reverse choice; read the relevant ones before
   changing pipeline behaviour.
+- `docs/agents/` — agent-facing conventions restored from upstream: the
+  canonical triage roles mapped to this repo's labels (`agents/triage.md`),
+  the GitHub issue-tracker command conventions (`agents/issue-tracker.md`),
+  how skills consume domain docs (`agents/domain.md`), and upstream
+  sandcastle-package contributor guides (`agents/adding-an-agent-provider.md`,
+  `agents/adding-an-issue-tracker.md`).
+- `.agents/skills/triage-repro/` — skill for interactively triaging an
+  issue number and attempting a reproduction; complements the label-driven
+  batch triage, which it does not replace.
 - `.sandcastle/CODING_STANDARDS.md` — coding standards the workflow agents
   apply to the host repo; they describe how code in an adopting repo
   should look.
-- `README.md` — adopter setup (secrets, labels) and deviations from the
-  upstream pipeline this was ported from.
+- `README.md` — adopter setup (repo settings, secrets, labels) and
+  deviations from the upstream pipeline this was ported from.

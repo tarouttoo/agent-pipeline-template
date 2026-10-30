@@ -2,8 +2,11 @@
 
 This is the human's side of the loop: how to write issues the pipeline can
 act on, how to hand work to the agents, and what is still yours to do.
-Label semantics live in [docs/labels.md](labels.md); per-workflow detail in
-the [Workflows table](../README.md#workflows).
+Label semantics live in [docs/labels.md](labels.md); the canonical triage
+roles the skills speak in (`needs-triage`, `needs-info`, `ready-for-agent`,
+`ready-for-human`, `wontfix`) map onto those labels in
+[docs/agents/triage.md](agents/triage.md); per-workflow detail in the
+[Workflows table](../README.md#workflows).
 
 ## The core loop
 
@@ -27,10 +30,11 @@ is always the human's call.
 The implement workflow is gated by a preflight that refuses issues it can't
 handle. Before labelling, check the issue is:
 
-- **Standalone** — it has no parent issue and no sub-issues. A sub-issue is
-  refused with a comment pointing at its parent; a parent (PRD-shaped
-  issue) is refused outright, since this MVP only supports one
-  self-contained change per issue.
+- **A Ticket, not a Spec** — it has no sub-issues of its own. A PRD-shaped
+  issue (one with sub-issues) is refused outright with `agent:blocked`;
+  label its sub-issue Tickets instead. A Ticket may sit under a parent
+  Spec: the implement pass pulls the parent Spec in as context, so keep
+  the big picture on the parent and the one change on the Ticket.
 - **One change per issue** — the agent opens one draft PR per issue and the
   PR body starts with `Closes #N`, so splitting unrelated asks into
   separate issues keeps the loop clean.
@@ -41,7 +45,7 @@ handle. Before labelling, check the issue is:
   refused; close the existing PR first if you want a fresh run.
 
 A refusal comments on the issue explaining why and removes the trigger
-label; the sub-issue and PRD-shaped refusals also add `agent:blocked`. Fix
+label; the PRD-shaped refusal also adds `agent:blocked`. Fix
 what the comment names and re-add `agent:implement`.
 
 ## 2. Hand an issue to an agent
@@ -97,7 +101,7 @@ issues are closed with a one-line comment pointing at the survivor.
 
 ## Quick checklist
 
-- [ ] Issue is standalone, one change, self-contained → add `agent:implement`
+- [ ] Issue is a Ticket (no sub-issues), one change, self-contained → add `agent:implement`
 - [ ] Draft PR arrives → review it
 - [ ] Feedback → comment + `agent:implement` on the PR
 - [ ] Conflicts → `agent:update-branch` on the PR
