@@ -16,6 +16,11 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+      # Checkout prefers AGENT_PAT (whose scopes cover workflow files), but
+      # the GITHUB_TOKEN fallback pushes too, and commits that add or edit
+      # .github/workflows/* are refused without the workflows permission
+      # (README, deviations entry 8).
+      workflows: write
 
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}

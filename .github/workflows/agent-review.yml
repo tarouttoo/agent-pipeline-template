@@ -20,6 +20,10 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # The reviewed branch may add or edit .github/workflows/* (the agents
+      # build this repo's own pipeline); pushing such commits is refused
+      # without the workflows permission (README, deviations entry 8).
+      workflows: write
 
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}

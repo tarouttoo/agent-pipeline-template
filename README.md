@@ -147,5 +147,19 @@ Verbatim is the goal; every deviation is listed here.
    real cause). Regression-tested in
    `.sandcastle/agent-workflows/shared/open-draft-pr.test.ts`, which runs
    the step script with a stubbed `gh`.
+8. **Branch-pushing jobs grant `workflows: write`** — every workflow that
+   pushes a branch (`agent-implement`, `agent-implement-pr`,
+   `agent-review`, `agent-update-branch`) adds `workflows: write` to its
+   job `permissions`. Upstream never pushes commits that create or update
+   files under `.github/workflows/`; this repo's agents build the pipeline
+   itself, and GitHub refuses such pushes with a plain `GITHUB_TOKEN`
+   ("refusing to allow a GitHub App to create or update workflow … without
+   `workflows` permission") — which failed the run at its final
+   "Push branch" step, after the agent had finished, and landed the PR
+   `agent:blocked`. `agent-implement` already pushed through `AGENT_PAT`
+   (whose scopes cover workflow files) and only hit this via its
+   `GITHUB_TOKEN` fallback; the review, implement-pr and update-branch
+   workflows always pushed through `GITHUB_TOKEN`. Contract-tested in
+   `.sandcastle/agent-workflows/shared/push-permissions.test.ts`.
 
 Prompt and workflow code text is otherwise unchanged from upstream.

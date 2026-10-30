@@ -29,6 +29,10 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # Merging main can bring .github/workflows/* files onto the branch;
+      # pushing such commits is refused without the workflows permission
+      # (README, deviations entry 8).
+      workflows: write
 
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
