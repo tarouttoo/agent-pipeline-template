@@ -84,6 +84,16 @@ describe("Open draft PR step", () => {
     expect(result.outputs).not.toContain("pr_number=");
   });
 
+  it("does not publish a pr_number when gh fails after printing stdout", async () => {
+    const result = await runStep(runScriptOf(OPEN_DRAFT_PR_STEP), `
+      echo "Creating draft pull request for agent/issue-11-some-issue-title..."
+      echo "GraphQL: Could not resolve to a PullRequest" >&2
+      exit 1
+    `);
+    expect(result.status).not.toBe(0);
+    expect(result.outputs).not.toContain("pr_number=");
+  });
+
   it("extracts pr_number from the URL gh prints on success", async () => {
     const result = await runStep(runScriptOf(OPEN_DRAFT_PR_STEP), `
       echo "Creating draft pull request for agent/issue-11-some-issue-title..."
