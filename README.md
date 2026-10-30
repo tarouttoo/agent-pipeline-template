@@ -33,12 +33,25 @@ trigger label named in that comment.
    setup command) lives in [`docs/labels.md`](docs/labels.md).
 
 3. **Allow GitHub Actions to create and approve pull requests** (repo →
-   Settings → Actions → General → Workflow permissions): the implement
+   Settings → Actions → General → Workflow permissions). The implement
    workflow (`agent-implement.yml`) opens its draft PR with `GITHUB_TOKEN`,
    and with this setting off — the default for new repositories and
-   organizations — that run fails at the "Open draft PR" step because
-   `GITHUB_TOKEN` is not permitted to create pull requests. Setting
-   `AGENT_PAT` does not bypass this: the step always uses `GITHUB_TOKEN`.
+   organizations — GitHub rejects that PR creation. Enable it in the
+   settings UI, or from the CLI (the `read` default is safe here: every
+   workflow declares its own `permissions` block):
+
+   ```sh
+   gh api -X PUT repos/<owner>/<repo>/actions/permissions/workflow \
+     -f default_workflow_permissions=read \
+     -F can_approve_pull_request_reviews=true
+   ```
+
+   With the setting off, the failure is easy to misread: `gh pr create` in
+   "Open draft PR" is piped through `tail`, so that step stays green and
+   the run instead fails at "Request automated review" with
+   `no pull requests found for branch`, leaving the issue `agent:blocked`
+   with an opaque reason. Setting `AGENT_PAT` does not bypass this: the
+   "Open draft PR" step always uses `GITHUB_TOKEN`.
 
 4. **Set the secrets** (repo → Settings → Secrets and variables → Actions):
    - `ZAI_API_KEY` — API key for the pi provider (required by every agent run).
@@ -97,7 +110,8 @@ Verbatim is the goal; every deviation is listed here.
    `tsconfig.json` cover the sandcastle package itself and never type-check
    its `.sandcastle/` workflow starters; this template does, so it adds a
    `@standard-schema/spec` devDependency (a type-only import used by the
-   ported code) and a `tsconfig.json` including `.sandcastle/**/*.ts`.
+   ported code) and a `tsconfig.json` including `.sandcastle/**/*.ts` and
+   `docs/**/*.ts` (the repo's doc-contract tests).
 4. **Agent-drafted PR bodies** — the implement agent drafts the draft-PR
    body per the shipped `.agents/skills/pr/` skill (Summary / Evidence /
    Merge Danger, from mattpocock/skills, itself adapted from Humanlayer's
